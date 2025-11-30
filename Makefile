@@ -12,13 +12,13 @@ setup:
 	uv sync --all-extras --dev
 
 lint:
-	pylint src/ tests/
+	uv run pylint src/ tests/
 
 tests:
-	pytest --cov=token_runtime_id --cov-report=term-missing --cov-report=html --cov-fail-under=100
+	uv run pytest --cov=token_runtime_id --cov-report=term-missing --cov-report=html --cov-fail-under=100
 
 pyright:
-	pyright
+	uv run pyright
 
 validate: lint pyright tests
 	@echo "All validation checks passed!"
