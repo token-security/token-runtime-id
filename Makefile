@@ -9,7 +9,7 @@ help:
 	@echo "  make validate  - Run lint, tests, and pyright"
 
 setup:
-	uv sync --all-extras
+	uv sync --all-extras --dev
 
 lint:
 	pylint src/ tests/
@@ -20,5 +20,5 @@ tests:
 pyright:
 	pyright
 
-validate: lint tests pyright
+validate: lint pyright tests
 	@echo "All validation checks passed!"
