@@ -101,7 +101,7 @@ def runtime_id(
             >>> @runtime_id
             ... def child():
             ...     print(get_runtime_id())
-            # Output: 12345:roothash:childhash
+            # Output: roothash:childhash
     """
     if method is None:
         return functools.partial(  # pyright: ignore[reportReturnType]
