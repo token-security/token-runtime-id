@@ -1,10 +1,27 @@
 [project]
 name = "token-runtime-id"
 version = "0.1.0"
-description = "Add your description here"
+authors = [
+  { name="Alexey Puchkov", email="alexey@token.security" },
+]
+description = "A lightweight Python library for adding traceable runtime IDs to your logs"
 readme = "README.md"
 requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Logging",
+]
 dependencies = []
+
+[project.urls]
+"Homepage" = "https://github.com/token-security/token-runtime-id"
+"Bug Tracker" = "https://github.com/token-security/token-runtime-id/issues"
+"Repository" = "https://github.com/token-security/token-runtime-id"
 
 [project.optional-dependencies]
 dev = [
