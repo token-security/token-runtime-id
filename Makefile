@@ -22,3 +22,16 @@ pyright:
 
 validate: lint pyright tests
 	@echo "All validation checks passed!"
+
+build:
+	rm -rf dist
+	python -m build
+	twine check dist/*
+
+publish-test: build
+	python -m twine upload --repository testpypi dist/*
+	@echo "Published to TestPyPI!"
+
+publish: build
+	python -m twine upload dist/*
+	@echo "Published to PyPI!"

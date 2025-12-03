@@ -1,4 +1,5 @@
 # pylint: disable=missing-function-docstring,missing-module-docstring
+import inspect
 import logging
 import os
 import pytest
@@ -106,6 +107,25 @@ def test__runtime_id__with_custom_length() -> None:
 
     assert rid is not None
     assert len(rid) == 16
+
+
+async def test__runtime_id__async_method() -> None:
+    @runtime_id(prefix_process_id=False, length=16)
+    async def sample_function() -> str | None:
+        return get_runtime_id()
+
+    rid = await sample_function()
+
+    assert rid is not None
+    assert len(rid) == 16
+
+
+async def test__runtime_id__async_method__returned_value_is_async_method() -> None:
+    @runtime_id(prefix_process_id=False, length=16)
+    async def sample_function() -> str | None:
+        return get_runtime_id()
+
+    assert inspect.iscoroutinefunction(sample_function())
 
 
 def test__runtime_id__with_custom_separator() -> None:

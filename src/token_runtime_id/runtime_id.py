@@ -4,6 +4,7 @@ This module provides a decorator-based system for generating and managing random
 runtime IDs throughout the execution context of your application.
 """
 import functools
+import inspect
 import logging
 import os
 import random
@@ -127,8 +128,8 @@ def runtime_id(
     if prefix is not None and (not isinstance(prefix, str) or len(prefix) < 1):
         raise ValueError('prefix must be None or a non-empty string')
 
-    @functools.wraps(method)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+
+    def _push_ids() -> tuple:
         rid = get_runtime_id()
 
         if rid is None:
@@ -149,16 +150,40 @@ def runtime_id(
 
         rid += _get_random_string(length, characters)
 
-        token = _RUNTIME_ID_CTX.set(rid)
-        depth_token = _RUNTIME_DEPTH_CTX.set(depth + 1)
+        return (
+            _RUNTIME_ID_CTX.set(rid),
+            _RUNTIME_DEPTH_CTX.set(depth + 1)
+        )
 
-        try:
-            return method(*args, **kwargs)
-        finally:
-            _RUNTIME_ID_CTX.reset(token)
-            _RUNTIME_DEPTH_CTX.reset(depth_token)
+    def _pop_ids(tokens: tuple) -> None:
+        _RUNTIME_ID_CTX.reset(tokens[0])
+        _RUNTIME_DEPTH_CTX.reset(tokens[1])
 
-    return wrapper
+
+    if inspect.iscoroutinefunction(method):
+        @functools.wraps(method)
+        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            tokens = _push_ids()
+
+            try:
+                return await method(*args, **kwargs)
+            finally:
+                _pop_ids(tokens)
+
+        wrapper_method = async_wrapper
+    else:
+        @functools.wraps(method)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            tokens = _push_ids()
+
+            try:
+                return method(*args, **kwargs)
+            finally:
+                _pop_ids(tokens)
+
+        wrapper_method = wrapper
+
+    return wrapper_method
 
 
 def get_runtime_id() -> str | None:
