@@ -28,6 +28,18 @@ def test__get_runtime_id__returns_value_within_decorated_function() -> None:
     assert isinstance(rid, str)
     assert len(rid) > 0
 
+def test__runtime_id__without_arguments() -> None:
+    @runtime_id()
+    def sample_function() -> str | None:
+        return get_runtime_id()
+
+    rid = sample_function()
+
+    assert rid is not None
+    assert isinstance(rid, str)
+    assert len(rid) > 0
+
+
 
 def test__get_runtime_id__returns_none_after_decorated_function_exits() -> None:
     @runtime_id
@@ -125,7 +137,7 @@ async def test__runtime_id__async_method__returned_value_is_async_method() -> No
     async def sample_function() -> str | None:
         return get_runtime_id()
 
-    assert inspect.iscoroutinefunction(sample_function())
+    assert inspect.iscoroutinefunction(sample_function)
 
 
 def test__runtime_id__with_custom_separator() -> None:

@@ -9,7 +9,7 @@ import logging
 import os
 import random
 from contextvars import ContextVar
-from typing import TypeVar, ParamSpec, Callable
+from typing import TypeVar, ParamSpec, Callable, Any
 
 P = ParamSpec('P')
 R = TypeVar('R')
@@ -59,7 +59,7 @@ def runtime_id(
     characters: str = "0123456789abcdefghijklmnopqrstuvwxyz",
     max_depth: int = 3,
     sep: str = ":",
-) -> Callable[..., R] | Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Any:
     """Decorator to generate and manage a random runtime ID for the execution context.
 
     This decorator sets a context-local runtime ID variable. If an ID already exists
@@ -129,7 +129,7 @@ def runtime_id(
         raise ValueError('prefix must be None or a non-empty string')
 
 
-    def _push_ids() -> tuple:
+    def _push_ids() -> tuple:  # pyright: ignore[reportMissingTypeArgument]
         rid = get_runtime_id()
 
         if rid is None:
@@ -155,7 +155,7 @@ def runtime_id(
             _RUNTIME_DEPTH_CTX.set(depth + 1)
         )
 
-    def _pop_ids(tokens: tuple) -> None:
+    def _pop_ids(tokens: tuple) -> None:  # pyright: ignore[reportMissingTypeArgument]
         _RUNTIME_ID_CTX.reset(tokens[0])
         _RUNTIME_DEPTH_CTX.reset(tokens[1])
 
